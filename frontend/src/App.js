@@ -54,7 +54,7 @@ function App() {
               latitude={p.latitude}
               longitude={p.longitude}
               anchor="left"
-              onClose={() => setShowPopup(false)}
+              onClose={() => setShowPopup(true)}
               key={p.id}
             >
               <div className="card">
