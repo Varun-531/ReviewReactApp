@@ -6,10 +6,12 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import StarIcon from "@mui/icons-material/Star";
 import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
+import {format} from "timeago.js";
 
 function App() {
-  const temp = 10;
+  const temp = 6;
   const [pins, setPins] = useState([{}]);
+  // const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [showPopup, setShowPopup] = useState(true);
   useEffect(() => {
     const getPins = async () => {
@@ -22,6 +24,11 @@ function App() {
     };
     getPins();
   }, []);
+
+  // const handleMarkerClick = (id) => {
+  //   setCurrentPlaceId(id);
+  // };
+  
   return (
     <Map
       mapboxAccessToken={process.env.REACT_APP_MAPBOX}
@@ -35,38 +42,44 @@ function App() {
     >
       {pins.map((p) => (
         <React.Fragment key={p.id}>
-          <Marker latitude={48.8584} longitude={2.2945} anchor="bottom">
-            <LocationOnIcon style={{ fontSize: temp * 4, color: "tomato" }} />
+          <Marker latitude={p.latitude} longitude={p.longitude} anchor="bottom">
+            <LocationOnIcon style={{ fontSize: temp * 10, color: "tomato" }} 
+              // onClick={()=>handleMarkerClick(p._id)}
+            />
           </Marker>
-          {/* {showPopup && (
+          {
+            {/* (p._id === currentPlaceId)  */}
+            && showPopup && (
             <Popup
-              latitude={48.8584}
-              longitude={2.2945}
+              latitude={p.latitude}
+              longitude={p.longitude}
               anchor="left"
               onClose={() => setShowPopup(false)}
               key={p.id}
             >
               <div className="card">
                 <label>Place</label>
-                <h3 className="place">Effiel Tower</h3>
+                <h3 className="place">{p.title}</h3>
                 <label>Review</label>
-                <p className="desc">It was beautiful</p>
+                <p className="desc">{p.description}</p>
                 <label>Rating</label>
                 <div className="stars">
-                  <StarIcon className="star"/>
-                  <StarIcon className="star"/>
-                  <StarIcon className="star"/>
-                  <StarIcon className="star"/>
-                  <StarIcon className="star"/>
+                  <StarIcon className="star" />
+                  <StarIcon className="star" />
+                  <StarIcon className="star" />
+                  <StarIcon className="star" />
+                  <StarIcon className="star" />
                 </div>
                 <label>Information</label>
                 <span className="username">
-                  Created by <b>Varun</b>
+                  Created by <b>{p.username}</b>
                 </span>
-                <span className="date">1 hour ago</span>
+                <span className="date">
+                {format(p.createdAt)}
+                </span>
               </div>
             </Popup>
-          )} */}
+          )}
         </React.Fragment>
       ))}
     </Map>
