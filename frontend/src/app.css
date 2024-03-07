@@ -7,7 +7,7 @@
 }
 
 label{
-    /* width: max-content; */
+    width: max-content;
     color: tomato;
     font-size: 13px;
     border-bottom: .5px solid tomato;
@@ -20,4 +20,16 @@ label{
 
 .star{
     color: gold;
+}
+Marker{
+    cursor:pointer;
+}
+.mapboxgl-ctrl-attrib.mapboxgl-compact{
+    display:none;
+}
+.mapboxgl-ctrl-bottom-left{
+    display: none;
+}
+.mapboxgl-ctrl-attrib-inner{
+    display: none;
 }

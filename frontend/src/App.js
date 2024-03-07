@@ -1,18 +1,18 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import "./app.css";
-import Map, { Marker, Popup } from "react-map-gl";
+import Map, { Marker, Popup, GeolocateControl } from "react-map-gl";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import StarIcon from "@mui/icons-material/Star";
 import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
-import {format} from "timeago.js";
+import { format } from "timeago.js";
 
 function App() {
   const temp = 6;
-  const [pins, setPins] = useState([{}]);
-  // const [currentPlaceId, setCurrentPlaceId] = useState(null);
-  const [showPopup, setShowPopup] = useState(true);
+  const [pins, setPins] = useState([]);
+  const [selectedPin, setSelectedPin] = useState(null);
+
   useEffect(() => {
     const getPins = async () => {
       try {
@@ -25,10 +25,6 @@ function App() {
     getPins();
   }, []);
 
-  // const handleMarkerClick = (id) => {
-  //   setCurrentPlaceId(id);
-  // };
-  
   return (
     <Map
       mapboxAccessToken={process.env.REACT_APP_MAPBOX}
@@ -41,21 +37,33 @@ function App() {
       mapStyle="mapbox://styles/varun2222/cltax7ug500gd01qn0x60alup"
     >
       {pins.map((p) => (
-        <React.Fragment key={p.id}>
-          <Marker latitude={p.latitude} longitude={p.longitude} anchor="bottom">
-            <LocationOnIcon style={{ fontSize: temp * 10, color: "tomato" }} 
-              // onClick={()=>handleMarkerClick(p._id)}
+        <React.Fragment key={p._id}>
+          <Marker
+            latitude={p.latitude}
+            longitude={p.longitude}
+            anchor="bottom"
+            onClick={() => setSelectedPin(p)}
+          >
+            <LocationOnIcon
+              style={{
+                fontSize: temp * 5,
+                color: "tomato",
+                cursor: "pointer",
+              }}
             />
           </Marker>
-          {
-            {/* (p._id === currentPlaceId)  */}
-            && showPopup && (
+
+          {selectedPin && selectedPin._id === p._id && (
             <Popup
               latitude={p.latitude}
               longitude={p.longitude}
               anchor="left"
-              onClose={() => setShowPopup(true)}
-              key={p.id}
+              onClose={() => setSelectedPin(null)}
+              key={p._id}
+              onOpen={() => {
+                // Your logic when the popup is opened
+                console.log("Popup pin:", selectedPin._id);
+              }}
             >
               <div className="card">
                 <label>Place</label>
@@ -64,24 +72,26 @@ function App() {
                 <p className="desc">{p.description}</p>
                 <label>Rating</label>
                 <div className="stars">
+                  {/* <StarIcon className="star" />
                   <StarIcon className="star" />
                   <StarIcon className="star" />
                   <StarIcon className="star" />
-                  <StarIcon className="star" />
-                  <StarIcon className="star" />
+                  <StarIcon className="star" /> */}
+                  {Array.from({ length: p.rating }, (_, index) => (
+                    <StarIcon key={index} className="star" />
+                  ))}
                 </div>
                 <label>Information</label>
                 <span className="username">
                   Created by <b>{p.username}</b>
                 </span>
-                <span className="date">
-                {format(p.createdAt)}
-                </span>
+                <span className="date">{format(p.createdAt)}</span>
               </div>
             </Popup>
           )}
         </React.Fragment>
       ))}
+      <GeolocateControl />
     </Map>
   );
 }
