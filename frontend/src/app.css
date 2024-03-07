@@ -33,3 +33,26 @@ Marker{
 .mapboxgl-ctrl-attrib-inner{
     display: none;
 }
+form{
+    width: 250px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+input,textarea{
+    border: none;
+    border-bottom: 1px solid tomato;
+}
+input::placeholder,textarea::placeholder{
+    color: grey;
+    font-size:12px ;
+}
+.submitButton{
+    border:none;
+    padding: 5px;
+    border-radius: 5px;
+    color: white;
+    background-color: tomato;
+    cursor: pointer;
+}

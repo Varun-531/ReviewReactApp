@@ -3,6 +3,9 @@ const Pin = require("../models/pin");
 
 //create a pin
 router.post("/", async (req, res) => {
+  if(req.body.rating === 0){
+    req.body.rating = 1;
+  }
   const newPin = new Pin(req.body);
   try {
     const savedPin = await newPin.save();
