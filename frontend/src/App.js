@@ -11,7 +11,8 @@ import { format } from "timeago.js";
 import Register from "./components/register";
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null); // ["Varun", "John", "Jane"
+  const mystorage = window.localStorage;
+  const [currentUser, setCurrentUser] = useState(mystorage.getItem("user"));
   const temp = 6;
   const [pins, setPins] = useState([]);
   const [newPlace, setNewPlace] = useState(null);
@@ -90,6 +91,11 @@ function App() {
     }
   };
 
+const handleLogout = () => {
+  mystorage.removeItem("user");
+  setCurrentUser(null);
+}
+
   return (
     <Map
       mapboxAccessToken={process.env.REACT_APP_MAPBOX}
@@ -113,7 +119,7 @@ function App() {
             <LocationOnIcon
               style={{
                 fontSize: temp * 5,
-                color: p.username === currentUser ? "tomato" : "slateblue",
+                color: p.username === mystorage.getItem("user") ? "tomato" : "slateblue",
                 cursor: "pointer",
               }}
             />
@@ -196,7 +202,7 @@ function App() {
         </Popup>
       )}
       {currentUser ? (
-        <button className="button logout">Log out</button>
+        <button className="button logout" onClick={handleLogout}>Log out</button>
       ) : (
         <div className="buttons">
           <button className="button login" onClick={()=>{
@@ -208,7 +214,7 @@ function App() {
         </div>
       )}
       {showRegister && <Register setShowRegister={setShowRegister}/>}  
-      {showLogin && <Login setShowLogin={setShowLogin} />}
+      {showLogin && <Login setShowLogin={setShowLogin} mystorage={mystorage} setCurrentUser={setCurrentUser}/>}
     </Map>
   );
 }
