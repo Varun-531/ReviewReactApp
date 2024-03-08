@@ -1,22 +1,26 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import "./app.css";
+import Login from "./components/login";
 import Map, { Marker, Popup, GeolocateControl } from "react-map-gl";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import StarIcon from "@mui/icons-material/Star";
 import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
 import { format } from "timeago.js";
+import Register from "./components/register";
 
 function App() {
-  const currentUser = "Doe varun";
+  const [currentUser, setCurrentUser] = useState(null); // ["Varun", "John", "Jane"
   const temp = 6;
   const [pins, setPins] = useState([]);
   const [newPlace, setNewPlace] = useState(null);
   const [selectedPin, setSelectedPin] = useState(null);
   const [title, setTitle] = useState(null);
+  const [showRegister, setShowRegister] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const [desc, setDesc] = useState(null);
-  const [rating, setRating] = useState(0);  
+  const [rating, setRating] = useState(0);
   const [viewPort, setViewPort] = useState({
     latitude: 48.8584,
     longitude: 2.2945,
@@ -57,7 +61,7 @@ function App() {
       return newViewport;
     });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPin = {
@@ -68,14 +72,14 @@ function App() {
       latitude: newPlace.lat,
       longitude: newPlace.lng,
     };
-  
+
     try {
       // Await the axios.post call to get the response
       const res = await axios.post("/pins", newPin);
-  
+
       // Update the state with the new pin
       setPins((prevPins) => [...prevPins, res.data]);
-  
+
       // Reset the form
       setNewPlace(null);
       setTitle(null);
@@ -85,8 +89,7 @@ function App() {
       console.log(err);
     }
   };
-  
-  
+
   return (
     <Map
       mapboxAccessToken={process.env.REACT_APP_MAPBOX}
@@ -103,10 +106,9 @@ function App() {
             longitude={p.longitude}
             anchor="bottom"
             // onClick={() => setSelectedPin(p)}
-            onClick={() =>{
+            onClick={() => {
               handleClick(p);
             }}
-
           >
             <LocationOnIcon
               style={{
@@ -148,7 +150,7 @@ function App() {
           )}
         </React.Fragment>
       ))}
-      <GeolocateControl />
+      {/* <GeolocateControl /> */}
       {newPlace && (
         <Popup
           latitude={newPlace.lat}
@@ -163,24 +165,50 @@ function App() {
           <div>
             <form onSubmit={handleSubmit}>
               <label>Title</label>
-              <input type="text" placeholder="Enter a title" onChange={(e)=>setTitle(e.target.value)}/>
+              <input
+                type="text"
+                placeholder="Enter a title"
+                onChange={(e) => setTitle(e.target.value)}
+              />
               <label>Review</label>
-              <textarea placeholder="Say us something about this place."
-                onChange={(e)=>setDesc(e.target.value)}
+              <textarea
+                placeholder="Say us something about this place."
+                onChange={(e) => setDesc(e.target.value)}
               />
               <label>Rating</label>
-              <select name="rating" id="rating" onChange={(e)=>setRating(e.target.value)} defaultValue={1}>
+              <select
+                name="rating"
+                id="rating"
+                onChange={(e) => setRating(e.target.value)}
+                defaultValue={1}
+              >
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
               </select>
-              <button className="submitButton" type="submit">Add Pin</button>
+              <button className="submitButton" type="submit">
+                Add Pin
+              </button>
             </form>
           </div>
         </Popup>
       )}
+      {currentUser ? (
+        <button className="button logout">Log out</button>
+      ) : (
+        <div className="buttons">
+          <button className="button login" onClick={()=>{
+            setShowLogin(true);
+          }}>Log in</button>
+          <button className="button register" onClick={()=>{
+            setShowRegister(true);
+          }}>Register</button>
+        </div>
+      )}
+      {showRegister && <Register setShowRegister={setShowRegister}/>}  
+      {showLogin && <Login setShowLogin={setShowLogin} />}
     </Map>
   );
 }
